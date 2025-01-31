@@ -6,6 +6,8 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/SignUp'
 import Tour from './pages/Tour'
+import Account from './pages/Account'
+import ErrorPage from './components/Error'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -18,7 +20,9 @@ function App() {
             <Route index element={<Home />} />
             <Route path='login' element={<Login />} />
             <Route path='sign-up' element={<Signup />} />
+            <Route path='account' element={<Account />} />
             <Route path='tour' element={<Tour />} />
+            <Route path='*' element={<ErrorPage msg={"Page Not Found"} />} />
           </Route>
         </Routes>
       </BrowserRouter>
