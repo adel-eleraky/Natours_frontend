@@ -21,7 +21,7 @@ function App() {
             <Route path='login' element={<Login />} />
             <Route path='sign-up' element={<Signup />} />
             <Route path='account' element={<Account />} />
-            <Route path='tour' element={<Tour />} />
+            <Route path='tour/:id' element={<Tour />} />
             <Route path='*' element={<ErrorPage msg={"Page Not Found"} />} />
           </Route>
         </Routes>
