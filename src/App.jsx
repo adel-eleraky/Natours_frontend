@@ -8,6 +8,8 @@ import Signup from './pages/SignUp'
 import Tour from './pages/Tour'
 import Account from './pages/Account'
 import ErrorPage from './components/Error'
+import ProtectedRoute from './components/ProtectedRoute'
+import UnAuthRoute from './components/UnAuthRoute'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -18,9 +20,13 @@ function App() {
         <Routes>
           <Route path='/' element={<Layout />}>
             <Route index element={<Home />} />
-            <Route path='login' element={<Login />} />
-            <Route path='sign-up' element={<Signup />} />
-            <Route path='account' element={<Account />} />
+            <Route element={<UnAuthRoute />} >
+              <Route path='login' element={<Login />} />
+              <Route path='sign-up' element={<Signup />} />
+            </Route>
+            <Route element={<ProtectedRoute />} >
+              <Route path='account' element={<Account />} />
+            </Route>
             <Route path='tour/:id' element={<Tour />} />
             <Route path='*' element={<ErrorPage msg={"Page Not Found"} />} />
           </Route>
