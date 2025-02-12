@@ -2,10 +2,17 @@ import { useFormik } from "formik";
 import React, { useState } from "react";
 import * as Yup from "yup"
 import "./css/login.css"
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../rtk/features/AuthSlice";
+import { Navigate, useNavigate } from "react-router";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
 const Login = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
+    const { status, message, user, errors, token } = useSelector(state => state.auth)
 
 
     // Validation schema using Yup
@@ -14,7 +21,7 @@ const Login = () => {
             .email("Invalid email format")
             .required("Email is required"),
         password: Yup.string()
-            .min(8, "Password must be at least 8 characters")
+            .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, "Password must contain at least one letter and one number")
             .required("Password is required"),
     });
 
@@ -26,17 +33,10 @@ const Login = () => {
         },
         validationSchema,
         onSubmit: (values) => {
-            console.log("Login Submitted:", values);
             // Dispatch login action or API request here
+            dispatch(loginUser(values))
         },
     });
-
-
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     // Add login logic here
-    //     console.log("Login Submitted:", { email, password });
-    // };
 
     return (
         <main className="main">
@@ -55,6 +55,9 @@ const Login = () => {
                         {formik.touched.email && formik.errors.email ? (
                             <p className="form__error">{formik.errors.email}</p>
                         ) : null}
+                        {errors?.email ?
+                            <p className="form__error">{errors?.email}</p>
+                            : null}
                     </div>
                     <div className="form__group ma-bt-md">
                         <label className="form__label" htmlFor="password">Password</label>
@@ -69,13 +72,30 @@ const Login = () => {
                         {formik.touched.password && formik.errors.password ? (
                             <p className="form__error">{formik.errors.password}</p>
                         ) : null}
+                        {errors?.password ?
+                            <p className="form__error">{errors?.password}</p>
+                            : null}
                     </div>
                     <div className="form__group">
                         <button className="btn btn--green" type="submit">Login</button>
                     </div>
                 </form>
             </div>
+            <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+            />
         </main>
+
     );
 };
 
