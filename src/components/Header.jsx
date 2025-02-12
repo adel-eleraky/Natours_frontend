@@ -1,7 +1,17 @@
 import React from "react";
-import { Link } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, Navigate, useNavigate } from "react-router";
+import { logoutUser } from "../rtk/features/AuthSlice";
 
-const Header = ({ user }) => {
+const Header = () => {
+
+    const {user} = useSelector(state => state.auth)
+    const dispatch = useDispatch()
+
+    function logout() {
+        dispatch(logoutUser())
+    }
+
     return (
         <header className="header">
             <nav className="nav nav--tours">
@@ -13,15 +23,15 @@ const Header = ({ user }) => {
             <nav className="nav nav--user">
                 {user ? (
                     <>
-                        <button className="nav__el nav__el--logout">Log out</button>
-                        <a href="/me" className="nav__el">
+                        <button className="nav__el nav__el--logout" onClick={logout}>Log out</button>
+                        <Link to="/account" className="nav__el">
                             <img
                                 className="nav__user-img"
                                 src={`/img/users/${user.photo}`}
                                 alt="User photo"
                             />
                             <span>{user.name.split(" ")[0]}</span>
-                        </a>
+                        </Link>
                     </>
                 ) : (
                     <>
