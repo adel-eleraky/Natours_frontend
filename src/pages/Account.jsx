@@ -1,19 +1,14 @@
 import React, { useState } from "react";
 import NavElement from "../components/NavElement";
+import { useSelector } from "react-redux";
 
-const Account = ({ user }) => {
+const Account = () => {
 
-    user = {
-        _id: "5c8a1d5b0190b214360dc057",
-        name: "Jonas Schmedtmann",
-        email: "admin@natours.io",
-        role: "admin",
-        active: true,
-        photo: "user-1.jpg",
-    }
-    const [name, setName] = useState(user.name);
-    const [email, setEmail] = useState(user.email);
-    const [photo, setPhoto] = useState(user.photo);
+    const {user} = useSelector(state => state.auth)
+    
+    const [name, setName] = useState(user?.name);
+    const [email, setEmail] = useState(user?.email);
+    const [photo, setPhoto] = useState(user?.photo);
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
@@ -30,7 +25,7 @@ const Account = ({ user }) => {
                         <NavElement href="#" icon="credit-card" name="Billing" />
                     </ul>
 
-                    {user.role === "admin" && (
+                    {user?.role === "admin" && (
                         <div className="admin-nav">
                             <h5 className="admin-nav__heading">Admin</h5>
                             <ul className="side-nav">
