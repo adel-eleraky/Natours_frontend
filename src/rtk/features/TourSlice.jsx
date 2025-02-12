@@ -30,7 +30,7 @@ const toursSlice = createSlice({
     initialState: {
         tours: [],
         tour: null,
-        loading: true,
+        loading: false,
         error: null,
     },
     reducers: {}, // No need for sync reducers now
