@@ -1,27 +1,46 @@
+import { useFormik } from "formik";
 import React, { useState } from "react";
-// import "./FormStyles.css"; // Reuse the same CSS for styling
-
+import { useDispatch, useSelector } from "react-redux";
+import * as Yup from "yup"
+import { registerUser } from "../rtk/features/AuthSlice";
 const Signup = () => {
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Add signup logic here
-        if (password !== confirmPassword) {
-            alert("Passwords do not match!");
-            return;
-        }
-        console.log("Signup Submitted:", { name, email, password });
-    };
+    const {user , errors} = useSelector(state => state.auth)
+
+
+    const dispatch = useDispatch()
+    // Validation schema using Yup
+    const validationSchema = Yup.object({
+        name: Yup.string().min(2, "Min is length is 2 Char").max(16, "Max length is 16 Char").required("Name is required"),
+        email: Yup.string()
+            .email("Invalid email format")
+            .required("Email is required"),
+        password: Yup.string()
+            .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, "Password must contain at least one letter and one number")
+            .required("Password is required"),
+        passwordConfirm: Yup.string().oneOf([Yup.ref("password")], "Confirm pass doesn't match password").required("Confirm password is required")
+    });
+
+    // Formik configuration
+    const formik = useFormik({
+        initialValues: {
+            name: "",
+            email: "",
+            password: "",
+            passwordConfirm: ""
+        },
+        validationSchema,
+        onSubmit: (values) => {
+            dispatch(registerUser(values))
+        },
+    });
+
 
     return (
         <main className="main">
             <div className="signup-form">
                 <h2 className="heading-secondary ma-bt-lg">Sign up for an account</h2>
-                <form className="form form--signup" onSubmit={handleSubmit}>
+                <form className="form form--signup" onSubmit={formik.handleSubmit}>
                     <div className="form__group">
                         <label className="form__label" htmlFor="name">Your Name</label>
                         <input
@@ -29,10 +48,11 @@ const Signup = () => {
                             className="form__input"
                             type="text"
                             placeholder="John Doe"
-                            required
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            {...formik.getFieldProps("name")}
                         />
+                        {formik.touched.name && formik.errors.name ? (
+                            <p className="form__error">{formik.errors.name}</p>
+                        ) : null}
                     </div>
                     <div className="form__group">
                         <label className="form__label" htmlFor="email">Email address</label>
@@ -41,10 +61,14 @@ const Signup = () => {
                             className="form__input"
                             type="email"
                             placeholder="you@example.com"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            {...formik.getFieldProps("email")}
                         />
+                        {formik.touched.email && formik.errors.email ? (
+                            <p className="form__error">{formik.errors.email}</p>
+                        ) : null}
+                        {errors?.email ?
+                            <p className="form__error">{errors?.email}</p>
+                            : null}
                     </div>
                     <div className="form__group ma-bt-md">
                         <label className="form__label" htmlFor="password">Password</label>
@@ -53,11 +77,11 @@ const Signup = () => {
                             className="form__input"
                             type="password"
                             placeholder="••••••••"
-                            required
-                            minLength="8"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            {...formik.getFieldProps("password")}
                         />
+                        {formik.touched.password && formik.errors.password ? (
+                            <p className="form__error">{formik.errors.password}</p>
+                        ) : null}
                     </div>
                     <div className="form__group ma-bt-md">
                         <label className="form__label" htmlFor="confirmPassword">Confirm Password</label>
@@ -66,11 +90,11 @@ const Signup = () => {
                             className="form__input"
                             type="password"
                             placeholder="••••••••"
-                            required
-                            minLength="8"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            {...formik.getFieldProps("passwordConfirm")}
                         />
+                        {formik.touched.passwordConfirm && formik.errors.passwordConfirm ? (
+                            <p className="form__error">{formik.errors.passwordConfirm}</p>
+                        ) : null}
                     </div>
                     <div className="form__group">
                         <button className="btn btn--green" type="submit">Sign up</button>
