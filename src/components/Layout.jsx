@@ -5,15 +5,16 @@ import { Outlet } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { RotateSpinner } from "react-spinners-kit"
 import { fetchTours } from "../rtk/features/TourSlice";
+import { getLoggedInUser } from "../rtk/features/AuthSlice";
 
-const Layout = ({ title, alert, children }) => {
+const Layout = ({ alert }) => {
 
     const dispatch = useDispatch()
     let [loading, setLoading] = useState(true)
 
-
     useEffect(() => {
         dispatch(fetchTours()).then(() => setLoading(false))
+        dispatch(getLoggedInUser())
     }, [])
 
     if (loading) {
